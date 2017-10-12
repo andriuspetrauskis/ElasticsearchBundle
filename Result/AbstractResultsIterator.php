@@ -315,12 +315,17 @@ abstract class AbstractResultsIterator implements \Countable, \Iterator
         }
 
 //        $raw = $this->manager->scroll($this->scrollId, $this->scrollDuration, Result::RESULTS_RAW);
-        $raw = $this->manager->getClient()->scroll(
-            [
-                'scroll' => $this->scrollDuration,
-                'scroll_id' => $this->scrollId,
-            ]
-        );
+        $params = [
+            'scroll' => $this->scrollDuration,
+            'scroll_id' => $this->scrollId,
+        ];
+
+        if (version_compare('5.0.0', $this->manager->getVersionNumber(), '>')) {
+            $params['body'] = $this->scrollId;
+            $params['custom'] = ['scroll' => $this->scrollDuration];
+        }
+
+        $raw = $this->manager->getClient()->scroll($params);
         $this->rewind();
         $this->scrollId = $raw['_scroll_id'];
         $this->documents = $raw['hits']['hits'];
