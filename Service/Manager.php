@@ -652,7 +652,7 @@ class Manager
      */
     public function clearScroll($scrollId)
     {
-        $this->getClient()->clearScroll(['scroll_id' => $scrollId]);
+        $this->getClient()->clearScroll(['body' => $scrollId]);
     }
 
     /**
